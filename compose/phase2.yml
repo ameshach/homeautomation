@@ -24,7 +24,7 @@ services:
 
         if [ ! -d repo/.git ]; then
           rm -rf repo
-          git clone "$REPO_URL" repo
+          git clone "$$REPO_URL" repo
         fi
 
         cd repo
@@ -41,13 +41,13 @@ services:
           cp -r ha_config/packages/. /ha_config/packages/
 
           # Reload HA core config (no docker socket needed)
-          RELOAD_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
-            -X POST "${HA_URL%/}/api/services/homeassistant/reload_core_config" \
-            -H "Authorization: Bearer $HA_TOKEN" \
+          RELOAD_STATUS=$$(curl -s -o /dev/null -w "%{http_code}" \
+            -X POST "$$HA_URL/api/services/homeassistant/reload_core_config" \
+            -H "Authorization: Bearer $$HA_TOKEN" \
             -H "Content-Type: application/json")
 
-          echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] deployed $(cat deploy/VERSION 2>/dev/null || echo unknown) | HA reload: $RELOAD_STATUS"
-          sleep "$POLL_SECONDS"
+          echo "[$$(date -u +%Y-%m-%dT%H:%M:%SZ)] deployed $$(cat deploy/VERSION 2>/dev/null || echo unknown) | HA reload: $$RELOAD_STATUS"
+          sleep "$$POLL_SECONDS"
         done
 
   target:
