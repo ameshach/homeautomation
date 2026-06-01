@@ -1,0 +1,7 @@
+# Sensitive — never commit
+.env
+
+# Generated files (produced by apply-config.sh from templates)
+compose/phase*.generated.yml
+hermes/config.yml
+ha_config/secrets.yaml
