@@ -14,8 +14,8 @@
       (test: PASS — compose/phase1.yml committed; uses ${REPO_URL}/${POLL_SECONDS} from .env)
 - [x] Add `deploy/VERSION` with value `v1`
       (test: PASS — deploy/VERSION committed)
-- [ ] Human applies compose in Container Manager (record done here)
-      Test gate: `curl http://<nas>:8088/VERSION` returns `v1`
+- [x] Human applies compose in Container Manager (record done here)
+      (test: PASS — curl http://localhost:8088/VERSION returns v1)
 - [ ] Bump `deploy/VERSION` to `v2`, commit, push
       Test gate: within POLL_SECONDS, curl returns `v2`  ← proves Git→deploy loop
 
