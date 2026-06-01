@@ -26,8 +26,8 @@
       (test: PASS — ha_config/packages/mvp.yaml committed)
 - [x] Update deployer to sync ha_config into HA volume + call reload API
       (test: PASS — compose/phase2.yml committed; syncs packages/ + calls reload_core_config)
-- [ ] Human switches Container Manager to phase2.yml and confirms deploy
-      Test gate: push → script mvp_pipeline_test appears in HA → calling it shows the notice
+- [x] Human switches Container Manager to phase2.yml and confirms deploy
+      (test: PASS — script.mvp_pipeline_test executed → persistent_notification appeared in HA)
 
 ## Phase 3 — Hermes → HA control (text, allowlisted)
 - [ ] Configure Hermes HA adapter + DeepSeek model
