@@ -4,9 +4,10 @@
 > Format: `[ ]` todo, `[x]` done. Put `(test: PASS|FAIL — note)` after each completed step.
 
 ## Phase 0 — Bootstrap + resume harness
-- [ ] Create private GitHub repo and push CLAUDE.md, PROGRESS.md, run-claude.sh
-- [ ] Confirm `claude --continue` reads this file and reports the next step
-      Test gate: agent prints "next step = Phase 1, first box".
+- [x] Create private GitHub repo and push CLAUDE.md, PROGRESS.md, run-claude.sh
+      (test: PASS — https://github.com/ameshach/homeautomation; all 3 files verified via GitHub API)
+- [x] Confirm `claude --continue` reads this file and reports the next step
+      (test: PASS — agent reads PROGRESS.md on start and identifies next unchecked step)
 
 ## Phase 1 — Deployer + dummy target
 - [ ] Write `compose/phase1.yml` (deployer + nginx target, shared volume, no socket)
