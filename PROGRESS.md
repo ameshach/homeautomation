@@ -10,8 +10,10 @@
       (test: PASS — agent reads PROGRESS.md on start and identifies next unchecked step)
 
 ## Phase 1 — Deployer + dummy target
-- [ ] Write `compose/phase1.yml` (deployer + nginx target, shared volume, no socket)
-- [ ] Add `deploy/VERSION` with value `v1`
+- [x] Write `compose/phase1.yml` (deployer + nginx target, shared volume, no socket)
+      (test: PASS — compose/phase1.yml committed; uses ${REPO_URL}/${POLL_SECONDS} from .env)
+- [x] Add `deploy/VERSION` with value `v1`
+      (test: PASS — deploy/VERSION committed)
 - [ ] Human applies compose in Container Manager (record done here)
       Test gate: `curl http://<nas>:8088/VERSION` returns `v1`
 - [ ] Bump `deploy/VERSION` to `v2`, commit, push

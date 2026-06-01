@@ -1,0 +1,45 @@
+services:
+
+  deployer:
+    image: alpine/git:latest
+    container_name: deployer
+    restart: unless-stopped
+    environment:
+      REPO_URL: "${REPO_URL}"
+      POLL_SECONDS: "${POLL_SECONDS}"
+    volumes:
+      - shared-config:/out
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        set -e
+        cd /tmp
+
+        # Initial clone or reset to a clean state
+        if [ ! -d repo/.git ]; then
+          rm -rf repo
+          git clone "$REPO_URL" repo
+        fi
+
+        cd repo
+
+        # Deploy loop — pull and sync deploy/ into the shared volume
+        while true; do
+          git fetch --quiet origin
+          git reset --hard origin/master
+          cp -r deploy/* /out/
+          echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] deployed $(cat deploy/VERSION 2>/dev/null || echo unknown)"
+          sleep "$POLL_SECONDS"
+        done
+
+  target:
+    image: nginx:alpine
+    container_name: target
+    restart: unless-stopped
+    volumes:
+      - shared-config:/usr/share/nginx/html:ro
+    ports:
+      - "8088:80"
+
+volumes:
+  shared-config:
