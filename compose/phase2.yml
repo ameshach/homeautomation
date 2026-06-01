@@ -1,0 +1,63 @@
+services:
+
+  deployer:
+    image: alpine/git:latest
+    container_name: deployer
+    restart: unless-stopped
+    environment:
+      REPO_URL: "${REPO_URL}"
+      POLL_SECONDS: "${POLL_SECONDS}"
+      HA_URL: "${HA_URL}"
+      HA_TOKEN: "${HA_TOKEN}"
+    volumes:
+      - shared-config:/out                    # Phase 1 nginx target (kept)
+      - "${HA_CONFIG_PATH}:/ha_config"        # HA config dir bind-mounted from NAS host
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        set -e
+
+        # Install curl (not in alpine/git by default)
+        apk add --no-cache curl >/dev/null 2>&1
+
+        cd /tmp
+
+        if [ ! -d repo/.git ]; then
+          rm -rf repo
+          git clone "$REPO_URL" repo
+        fi
+
+        cd repo
+
+        while true; do
+          git fetch --quiet origin
+          git reset --hard origin/master
+
+          # Phase 1: sync deploy/ to nginx shared volume
+          cp -r deploy/* /out/
+
+          # Phase 2: sync ha_config/packages/ into HA config volume
+          mkdir -p /ha_config/packages
+          cp -r ha_config/packages/. /ha_config/packages/
+
+          # Reload HA core config (no docker socket needed)
+          RELOAD_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            -X POST "${HA_URL%/}/api/services/homeassistant/reload_core_config" \
+            -H "Authorization: Bearer $HA_TOKEN" \
+            -H "Content-Type: application/json")
+
+          echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] deployed $(cat deploy/VERSION 2>/dev/null || echo unknown) | HA reload: $RELOAD_STATUS"
+          sleep "$POLL_SECONDS"
+        done
+
+  target:
+    image: nginx:alpine
+    container_name: target
+    restart: unless-stopped
+    volumes:
+      - shared-config:/usr/share/nginx/html:ro
+    ports:
+      - "8088:80"
+
+volumes:
+  shared-config:

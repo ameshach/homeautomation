@@ -1,0 +1,18 @@
+# MVP test package — deployed via Git→deployer pipeline.
+# Calling this script from HA UI confirms the deploy loop reaches HA config.
+#
+# Prerequisite: configuration.yaml must contain:
+#   homeassistant:
+#     packages: !include_dir_named packages
+
+script:
+  mvp_pipeline_test:
+    alias: "MVP Pipeline Test"
+    icon: mdi:pipe
+    sequence:
+      - service: persistent_notification.create
+        data:
+          title: "Deploy pipeline live"
+          message: >
+            Git → deployer → Home Assistant config reload is working.
+            Package loaded from ha_config/packages/mvp.yaml.

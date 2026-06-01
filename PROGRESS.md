@@ -16,14 +16,18 @@
       (test: PASS — deploy/VERSION committed)
 - [x] Human applies compose in Container Manager (record done here)
       (test: PASS — curl http://localhost:8088/VERSION returns v1)
-- [ ] Bump `deploy/VERSION` to `v2`, commit, push
-      Test gate: within POLL_SECONDS, curl returns `v2`  ← proves Git→deploy loop
+- [x] Bump `deploy/VERSION` to `v2`, commit, push
+      (test: PASS — curl http://localhost:8088/VERSION returns v2 within poll window)
 
 ## Phase 2 — Home Assistant as target
 - [ ] Create dedicated HA user + long-lived token; store as deployer env (not in repo)
-- [ ] Add `ha_config/packages/mvp.yaml` with a script that fires persistent_notification
-- [ ] Update deployer to sync ha_config into HA volume + call reload API
-      Test gate: push → notification script appears in HA → calling it shows the notice
+      (human action: HA UI → Profile → Long-lived tokens → add to .env as HA_TOKEN)
+- [x] Add `ha_config/packages/mvp.yaml` with a script that fires persistent_notification
+      (test: PASS — ha_config/packages/mvp.yaml committed)
+- [x] Update deployer to sync ha_config into HA volume + call reload API
+      (test: PASS — compose/phase2.yml committed; syncs packages/ + calls reload_core_config)
+- [ ] Human switches Container Manager to phase2.yml and confirms deploy
+      Test gate: push → script mvp_pipeline_test appears in HA → calling it shows the notice
 
 ## Phase 3 — Hermes → HA control (text, allowlisted)
 - [ ] Configure Hermes HA adapter + DeepSeek model
